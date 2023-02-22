@@ -2,6 +2,10 @@ package com.example.PrinterManager;
 
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+
+import static java.lang.Thread.sleep;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ControllerManagerTest {
@@ -127,8 +131,8 @@ PrinterManager pm = new PrinterManager();
     void updateJobStatusFalseToTrue() {
         cm.addPrinter("1");
         int jobId = cm.AddPrintingJobAndReturnId("{data:GOAT}",1);
-        cm.updateJobStatus(0);
-        String s = cm.GetJobDetails(0);
+        cm.updateJobStatus(jobId);
+        String s = cm.GetJobDetails(jobId);
         assertTrue(s.contains("\"status\":true"));
     }
     @Test
@@ -222,8 +226,188 @@ PrinterManager pm = new PrinterManager();
     }
 
     @Test
-    void getPrinterJobsFilteredSuper() {
+    void getPrinterJobsFilteredSuperDateAndStatus() {
+        LocalDateTime date = LocalDateTime.now();
+        try {
+            sleep(2);                         // to make sure time is right
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        cm.addPrinter("1");
+        cm.addPrinter("2");
+        ArrayList<Integer> jobs = new ArrayList<Integer>();
+        for(int i=0;i<2;i++)
+        {
+            jobs.add(cm.AddPrintingJobAndReturnId("{data:\"print"+i+"Job1\"}", i+1));
+            jobs.add(cm.AddPrintingJobAndReturnId("{data:\"print"+i+"Job2\"}", i+1));
+            jobs.add(cm.AddPrintingJobAndReturnId("{data:\"print"+i+"Job3\"}", i+1));
+            jobs.add(cm.AddPrintingJobAndReturnId("{data:\"print"+i+"Job4\"}", i+1));
+        }
+        cm.updateJobStatus(jobs.get(3));
+        cm.updateJobStatus(jobs.get(6));
+        String s =cm.GetPrinterJobsFilteredSuper("true", String.valueOf(date));
+        assertTrue(s.contains("\"id\":"+jobs.get(3)+"") && s.contains("\"id\":"+jobs.get(6)+""));
     }
 
+    @Test
+    void getPrinterJobsFilteredSuperDateAndStatusFutureDate() {
+        LocalDateTime date = LocalDateTime.now();
+        cm.addPrinter("1");
+        cm.addPrinter("2");
+        ArrayList<Integer> jobs = new ArrayList<Integer>();
+        for(int i=0;i<2;i++)
+        {
+            jobs.add(cm.AddPrintingJobAndReturnId("{data:\"print"+i+"Job1\"}", i+1));
+            jobs.add(cm.AddPrintingJobAndReturnId("{data:\"print"+i+"Job2\"}", i+1));
+            jobs.add(cm.AddPrintingJobAndReturnId("{data:\"print"+i+"Job3\"}", i+1));
+            jobs.add(cm.AddPrintingJobAndReturnId("{data:\"print"+i+"Job4\"}", i+1));
+        }
+        cm.updateJobStatus(jobs.get(3));
+        cm.updateJobStatus(jobs.get(6));
+        String s =cm.GetPrinterJobsFilteredSuper("true", "2030-01-01T23:23:00");
+        assertEquals("[]", s);
+    }
+
+    @Test
+    void getPrinterJobsFilteredSuperDateAndStatusWrongFormatDate() {
+        LocalDateTime date = LocalDateTime.now();
+        cm.addPrinter("1");
+        cm.addPrinter("2");
+        ArrayList<Integer> jobs = new ArrayList<Integer>();
+        for(int i=0;i<2;i++)
+        {
+            jobs.add(cm.AddPrintingJobAndReturnId("{data:\"print"+i+"Job1\"}", i+1));
+            jobs.add(cm.AddPrintingJobAndReturnId("{data:\"print"+i+"Job2\"}", i+1));
+            jobs.add(cm.AddPrintingJobAndReturnId("{data:\"print"+i+"Job3\"}", i+1));
+            jobs.add(cm.AddPrintingJobAndReturnId("{data:\"print"+i+"Job4\"}", i+1));
+        }
+        cm.updateJobStatus(jobs.get(3));
+        cm.updateJobStatus(jobs.get(6));
+        String s =cm.GetPrinterJobsFilteredSuper("true", "2030:01:01T23:23:00");
+        assertTrue(s.contains("right format"));
+    }
+
+    @Test
+    void getPrinterJobsFilteredSuperDateNoStatus() {
+        LocalDateTime date = LocalDateTime.now();
+        try {
+            sleep(2);                         // to make sure time is right
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        cm.addPrinter("1");
+        cm.addPrinter("2");
+        ArrayList<Integer> jobs = new ArrayList<Integer>();
+        for(int i=0;i<2;i++)
+        {
+            jobs.add(cm.AddPrintingJobAndReturnId("{data:\"print"+i+"Job1\"}", i+1));
+            jobs.add(cm.AddPrintingJobAndReturnId("{data:\"print"+i+"Job2\"}", i+1));
+            jobs.add(cm.AddPrintingJobAndReturnId("{data:\"print"+i+"Job3\"}", i+1));
+            jobs.add(cm.AddPrintingJobAndReturnId("{data:\"print"+i+"Job4\"}", i+1));
+        }
+        cm.updateJobStatus(jobs.get(3));
+        cm.updateJobStatus(jobs.get(6));
+        String s =cm.GetPrinterJobsFilteredSuper(null, String.valueOf(date));
+        assertTrue(!s.equals("[]") && !s.contains("right format"));
+    }
+
+    @Test
+    void getPrinterJobsFilteredSuperDateNoStatusFutureDate() {
+        LocalDateTime date = LocalDateTime.now();
+        cm.addPrinter("1");
+        cm.addPrinter("2");
+        ArrayList<Integer> jobs = new ArrayList<Integer>();
+        for(int i=0;i<2;i++)
+        {
+            jobs.add(cm.AddPrintingJobAndReturnId("{data:\"print"+i+"Job1\"}", i+1));
+            jobs.add(cm.AddPrintingJobAndReturnId("{data:\"print"+i+"Job2\"}", i+1));
+            jobs.add(cm.AddPrintingJobAndReturnId("{data:\"print"+i+"Job3\"}", i+1));
+            jobs.add(cm.AddPrintingJobAndReturnId("{data:\"print"+i+"Job4\"}", i+1));
+        }
+        cm.updateJobStatus(jobs.get(3));
+        cm.updateJobStatus(jobs.get(6));
+        String s =cm.GetPrinterJobsFilteredSuper("true", "2030-01-01T23:23:00");
+        assertEquals("[]", s);
+    }
+
+    @Test
+    void getPrinterJobsFilteredSuperDateNoStatusWrongFormatDate() {
+        LocalDateTime date = LocalDateTime.now();
+        cm.addPrinter("1");
+        cm.addPrinter("2");
+        ArrayList<Integer> jobs = new ArrayList<Integer>();
+        for(int i=0;i<2;i++)
+        {
+            jobs.add(cm.AddPrintingJobAndReturnId("{data:\"print"+i+"Job1\"}", i+1));
+            jobs.add(cm.AddPrintingJobAndReturnId("{data:\"print"+i+"Job2\"}", i+1));
+            jobs.add(cm.AddPrintingJobAndReturnId("{data:\"print"+i+"Job3\"}", i+1));
+            jobs.add(cm.AddPrintingJobAndReturnId("{data:\"print"+i+"Job4\"}", i+1));
+        }
+        cm.updateJobStatus(jobs.get(3));
+        cm.updateJobStatus(jobs.get(6));
+        String s =cm.GetPrinterJobsFilteredSuper("true", "2030:01:01T23:23:00");
+        assertTrue(s.contains("right format"));
+    }
+
+    @Test
+    void getPrinterJobsFilteredSuperStatusNoDate() {
+        cm.addPrinter("1");
+        cm.addPrinter("2");
+        ArrayList<Integer> jobs = new ArrayList<Integer>();
+        for(int i=0;i<2;i++)
+        {
+            jobs.add(cm.AddPrintingJobAndReturnId("{data:\"print"+i+"Job1\"}", i+1));
+            jobs.add(cm.AddPrintingJobAndReturnId("{data:\"print"+i+"Job2\"}", i+1));
+            jobs.add(cm.AddPrintingJobAndReturnId("{data:\"print"+i+"Job3\"}", i+1));
+            jobs.add(cm.AddPrintingJobAndReturnId("{data:\"print"+i+"Job4\"}", i+1));
+        }
+        cm.updateJobStatus(jobs.get(3));
+        cm.updateJobStatus(jobs.get(6));
+        String s =cm.GetPrinterJobsFilteredSuper("true", null);
+        assertTrue(s.contains("\"id\":"+jobs.get(3)+"") && s.contains("\"id\":"+jobs.get(6)+""));
+    }
+
+    @Test
+    void getPrinterJobsFilteredSuperStatusNoDate2() {
+        cm.addPrinter("1");
+        cm.addPrinter("2");
+        ArrayList<Integer> jobs = new ArrayList<Integer>();
+        for(int i=0;i<2;i++)
+        {
+            jobs.add(cm.AddPrintingJobAndReturnId("{data:\"print"+i+"Job1\"}", i+1));
+            jobs.add(cm.AddPrintingJobAndReturnId("{data:\"print"+i+"Job2\"}", i+1));
+            jobs.add(cm.AddPrintingJobAndReturnId("{data:\"print"+i+"Job3\"}", i+1));
+            jobs.add(cm.AddPrintingJobAndReturnId("{data:\"print"+i+"Job4\"}", i+1));
+        }
+        cm.updateJobStatus(jobs.get(3));
+        cm.updateJobStatus(jobs.get(6));
+        String s =cm.GetPrinterJobsFilteredSuper("false", null);
+        assertTrue(!s.contains("\"id\":"+jobs.get(3)+"") && !s.contains("\"id\":"+jobs.get(6)+""));
+    }
+
+    @Test
+    void getPrinterJobsFilteredSuperNoStatusNoDateNoJobsNoMoney() {
+        cm.addPrinter("1");
+        cm.addPrinter("2");
+        String s =cm.GetPrinterJobsFilteredSuper(null, null);
+        assertTrue(s.equals("[]"));
+    }
+    @Test
+    void getPrinterJobsFilteredSuperNoStatusNoDateNoMoney() {
+        cm.addPrinter("1");
+        cm.addPrinter("2");
+        ArrayList<Integer> jobs = new ArrayList<Integer>();
+        for(int i=0;i<2;i++)
+        {
+            jobs.add(cm.AddPrintingJobAndReturnId("{data:\"print"+i+"Job1\"}", i+1));
+            jobs.add(cm.AddPrintingJobAndReturnId("{data:\"print"+i+"Job2\"}", i+1));
+            jobs.add(cm.AddPrintingJobAndReturnId("{data:\"print"+i+"Job3\"}", i+1));
+            jobs.add(cm.AddPrintingJobAndReturnId("{data:\"print"+i+"Job4\"}", i+1));
+        }
+        cm.updateJobStatus(jobs.get(3));
+        cm.updateJobStatus(jobs.get(6));
+        String s =cm.GetPrinterJobsFilteredSuper(null, null);
+        assertTrue(!s.equals("[]"));
+    }
 
 }

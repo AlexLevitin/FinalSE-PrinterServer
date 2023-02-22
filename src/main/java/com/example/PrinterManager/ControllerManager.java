@@ -186,7 +186,7 @@ public class ControllerManager {
             }
             catch (Exception e) {
                 System.out.println("Exception: " + e);
-                return "This date Is not In the right format , Bad Request";
+                return "This date Is not In the right format, needs to be: YYYY-MM-DDTHH:MM:SS , Bad Request";
             } // If the String was unable to be parsed.
 
             return data.toString();
