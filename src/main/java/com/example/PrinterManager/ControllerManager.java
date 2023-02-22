@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 @RestController
+@CrossOrigin
+
 public class ControllerManager {
     private PrinterManager Pmanager;
 
@@ -32,12 +34,17 @@ public class ControllerManager {
             return data.toString();
     }
 
+    @DeleteMapping("/printers/{id}")
+    void deletePrinterByID( @PathVariable int id) {
+        Pmanager.disconnect(id);
+        System.out.println("Printer "+id+" Disconnected");
+    }
+
     @PutMapping("/printers")
     void addPrinter(@RequestBody String id){
         JSONObject idJson = new JSONObject();
         idJson.put("id",id);
         Pmanager.addPrinter(Integer.parseInt(idJson.get("id").toString()),true);
-
         System.out.println("Printer Added, The id is :"+ Integer.parseInt(idJson.get("id").toString()));
     }
 
@@ -45,10 +52,7 @@ public class ControllerManager {
     String getPrinterByID( @PathVariable int id) {
         return Pmanager.getPrinterNoJobs(id).toString();
     }
-    @DeleteMapping("/printers/{id}")
-    void deletePrinterByID( @PathVariable int id) {
-        Pmanager.disconnect(id);
-    }
+
 
     @GetMapping("/printers/{id}/full")
     String getPrinterByIDAndAllJobs( @PathVariable int id) {
@@ -135,7 +139,7 @@ public class ControllerManager {
             return data.toString();
         }
 
-        if(dateString==null && status!=null && !status.contains("?")){
+        if(dateString==null && status!=null){
             boolean flag= false;
             if (status.toLowerCase(Locale.ROOT).contains("true") || status.toLowerCase(Locale.ROOT).contains("1")){
                 flag=true;
@@ -151,10 +155,9 @@ public class ControllerManager {
 
         if(dateString!=null && status==null){
             try {
-                String dateStringString= dateString.toString();
-                LocalDateTime date = LocalDateTime.parse(dateStringString);
+                LocalDateTime date = LocalDateTime.parse(dateString);
                 DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
-                    Pmanager.getAllJobs(date).forEach((e)-> {
+                Pmanager.getAllJobs(date).forEach((e)-> {
                     data.add(e.getJob().toString());
                 });
             }
@@ -165,16 +168,15 @@ public class ControllerManager {
             return data.toString();
         }
 
-        if(status.contains("?")){
+        if(dateString!=null && status!=null){
             try {
-                String [] Data = status.split("\\?");
-                LocalDateTime date = LocalDateTime.parse(Data[1].split("=")[1]);
+                LocalDateTime date = LocalDateTime.parse(dateString);
                 DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
                 boolean flag= false;
-                if (Data[0].toLowerCase(Locale.ROOT).contains("true") || Data[0].toLowerCase(Locale.ROOT).contains("1")){
+                if (status.toLowerCase(Locale.ROOT).contains("true") || status.toLowerCase(Locale.ROOT).contains("1")){
                     flag=true;
                 }
-                else if (Data[0].toLowerCase(Locale.ROOT).contains("false") || Data[0].toLowerCase(Locale.ROOT).contains("0")){
+                else if (status.toLowerCase(Locale.ROOT).contains("false") || status.toLowerCase(Locale.ROOT).contains("0")){
                     flag=false;
                 }
 
@@ -190,7 +192,7 @@ public class ControllerManager {
             return data.toString();
         }
 
-        return "";
+        return "No jobs for this filters";
     }
 
 
