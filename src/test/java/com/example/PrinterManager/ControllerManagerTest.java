@@ -59,9 +59,9 @@ PrinterManager pm = new PrinterManager();
     @Test
     void getPrinterByIDAndAllJobsValid() {
         cm.addPrinter("2");
-        cm.AddPrintingJobAndReturnId("{data:Gumigam}", 2);
+        int jobId = cm.AddPrintingJobAndReturnId("{data:Gumigam}", 2);
         String s = cm.getPrinterByIDAndAllJobs(2);
-        assertTrue(s.contains("\"id\":0,\"timeForTheJob\":0.007,\"content\":\"Gumigam\",\"status\":false}},\"liveness\":true,\"id\":2}}")
+        assertTrue(s.contains("\"id\":"+jobId+",\"timeForTheJob\":0.007,\"content\":\"Gumigam\",\"status\":false}},\"liveness\":true,\"id\":2}}")
                 && s.contains("{\"printer2\":{\"Jobs\":{"));
     }
     @Test
@@ -105,7 +105,7 @@ PrinterManager pm = new PrinterManager();
         cm.AddPrintingJobAndReturnId("{data:dio}",1);
         int jobId = cm.AddPrintingJobAndReturnId("{data:jojo}",1);
         String s = cm.getPrinterByIDAndAllJobs(1);
-        assertTrue(jobId == 1 && s.contains("jojo"));
+        assertTrue(jobId == jobId && s.contains("jojo"));
     }
     @Test
     void addPrintingJobAndReturnIdInvalidPrinter() {
@@ -118,9 +118,10 @@ PrinterManager pm = new PrinterManager();
     @Test
     void addPrintingJobAndReturnIdLongString() {
         cm.addPrinter("1");
-        int jobId = cm.AddPrintingJobAndReturnId("{data:\"sara shara shir sameach\"}",1);
+        String val = "sara shara shir sameach";
+        int jobId = cm.AddPrintingJobAndReturnId("{data:\""+val+"\"}",1);
         String s = cm.getPrinterByIDAndAllJobs(1);
-        assertTrue(jobId == 0 && s.contains("sara"));
+        assertTrue(s.contains("\",\"id\":"+jobId) && s.contains(val));
     }
     @Test
     void updateJobStatusFalseToTrue() {
@@ -136,7 +137,7 @@ PrinterManager pm = new PrinterManager();
         int jobId = cm.AddPrintingJobAndReturnId("{data:Yakov}",1);
         cm.updateJobStatus(0);
         cm.updateJobStatus(0);
-        String s = cm.GetJobDetails(0);
+        String s = cm.GetJobDetails(jobId);
         assertTrue(s.contains("\"status\":false"));
     }
 
