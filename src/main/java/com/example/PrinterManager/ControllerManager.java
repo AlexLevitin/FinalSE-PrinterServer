@@ -1,6 +1,7 @@
 package com.example.PrinterManager;
 
 import org.json.JSONObject;
+import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.*;
 
@@ -197,6 +198,8 @@ public class ControllerManager {
         return "No jobs for this filters";
     }
 
+    public static void main(String[] args) {
+        SpringApplication.run(ControllerManager.class, args);}
 
 
 }

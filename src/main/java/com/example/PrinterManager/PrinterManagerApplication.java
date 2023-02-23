@@ -1,4 +1,4 @@
-package com.example.PrinterManager;
+/*package com.example.PrinterManager;
 
 import org.springframework.boot.SpringApplication;
 
@@ -18,5 +18,5 @@ public class PrinterManagerApplication {
 //		System.out.println(p.getPrinter(1));
 	}
 
-}
+}*/
 
