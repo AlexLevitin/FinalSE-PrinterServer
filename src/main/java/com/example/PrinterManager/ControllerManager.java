@@ -1,6 +1,7 @@
 package com.example.PrinterManager;
 
 import org.json.JSONObject;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -8,6 +9,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Locale;
 
+@SpringBootApplication
 @RestController
 @CrossOrigin
 
