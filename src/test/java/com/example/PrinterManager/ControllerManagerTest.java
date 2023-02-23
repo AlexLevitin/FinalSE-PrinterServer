@@ -10,7 +10,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class ControllerManagerTest {
 ControllerManager cm = new ControllerManager();
-PrinterManager pm = new PrinterManager();
     @Test
     void addPrinterValidInput()
     {
@@ -23,7 +22,7 @@ PrinterManager pm = new PrinterManager();
     {
         Exception exception = assertThrows(NumberFormatException.class, () -> {
             cm.addPrinter("3d");
-            ;
+
         });
 
         String expectedMessage = "For input string";
@@ -109,13 +108,12 @@ PrinterManager pm = new PrinterManager();
         cm.AddPrintingJobAndReturnId("{data:dio}",1);
         int jobId = cm.AddPrintingJobAndReturnId("{data:jojo}",1);
         String s = cm.getPrinterByIDAndAllJobs(1);
-        assertTrue(jobId == jobId && s.contains("jojo"));
+        assertTrue(s.contains("jojo"));
     }
     @Test
     void addPrintingJobAndReturnIdInvalidPrinter() {
         cm.addPrinter("1");
         int jobId = cm.AddPrintingJobAndReturnId("{data:jojo}",2);
-        String s = cm.getPrinterByIDAndAllJobs(1);
         assertTrue(jobId == -1);
     }
 
