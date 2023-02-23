@@ -7,7 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class PrinterManagerApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(PrinterManagerApplication.class, args);
+		SpringApplication.run(ControllerManager.class, args);
 //		PrinterManager p =new PrinterManager();
 //		p.addPrinter(1,true);
 //		p.addPrinter(2,true);
