@@ -19,8 +19,8 @@ public class ControllerManager {
 
     ControllerManager() {
         this.Pmanager = new PrinterManager();
-        /*Pmanager.addPrinter(1,true);
-        Pmanager.addPrinter(2,true);
+        Pmanager.addPrinter(1,true);
+        /*Pmanager.addPrinter(2,true);
         Pmanager.addJobToPrinter(1,"alex Hey Bro");
         Pmanager.addJobToPrinter(1,"David ");*/
 
@@ -200,6 +200,5 @@ public class ControllerManager {
 
     public static void main(String[] args) {
         SpringApplication.run(ControllerManager.class, args);}
-
 
 }
