@@ -1,5 +1,7 @@
 package com.example.PrinterManager;
 
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
@@ -9,7 +11,20 @@ import static java.lang.Thread.sleep;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ControllerManagerTest {
-ControllerManager cm = new ControllerManager();
+    ControllerManager cm = new ControllerManager();
+
+    @BeforeEach
+    void init()
+    {
+        cm = new ControllerManager();
+    }
+
+    @AfterEach
+    void reset()
+    {
+        cm.Reset();
+    }
+
     @Test
     void addPrinterValidInput()
     {

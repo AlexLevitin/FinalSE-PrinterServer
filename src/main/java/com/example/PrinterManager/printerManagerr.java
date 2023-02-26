@@ -1,4 +1,3 @@
-// file path: src/main/java/com/example/Payroll/Employee.java
 package com.example.PrinterManager;
 
 import org.json.JSONObject;
@@ -7,10 +6,23 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 class PrinterManager {
 
+    private static PrinterManager singleInstance = null;
     private ArrayList<printer> printers;  // Create an ArrayList object}
 
-    PrinterManager() {
+    private PrinterManager() {
         this.printers = new ArrayList<printer>();
+    }
+
+    public static PrinterManager getInstance()
+    {
+        if(singleInstance == null)
+            singleInstance = new PrinterManager();
+        return singleInstance;
+    }
+    public  void KillSingleton()
+    {
+        this.printers = null;
+        singleInstance = null;
     }
 
     public void addPrinter(int id,boolean liveness) {

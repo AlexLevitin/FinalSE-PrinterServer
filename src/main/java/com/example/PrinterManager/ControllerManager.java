@@ -18,13 +18,15 @@ public class ControllerManager {
     private PrinterManager Pmanager;
 
     ControllerManager() {
-        this.Pmanager = new PrinterManager();
-        //Pmanager.addPrinter(1,true);
-        /*Pmanager.addPrinter(2,true);
-        Pmanager.addJobToPrinter(1,"alex Hey Bro");
-        Pmanager.addJobToPrinter(1,"David ");*/
-
+        this.Pmanager = PrinterManager.getInstance();
     }
+
+    public  void Reset()
+    {
+        this.Pmanager.KillSingleton();
+        this.Pmanager = PrinterManager.getInstance();
+    }
+
 
 
     @GetMapping("/printers")
