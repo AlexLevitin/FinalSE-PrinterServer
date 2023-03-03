@@ -1,5 +1,6 @@
 package com.example.PrinterManager;
 
+//import jdk.internal.org.objectweb.asm.util.Printer;
 import org.json.JSONObject;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -9,6 +10,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Locale;
+
+import static java.lang.Integer.parseInt;
 
 @SpringBootApplication
 @RestController
@@ -21,7 +24,7 @@ public class ControllerManager {
         this.Pmanager = PrinterManager.getInstance();
     }
 
-    public  void Reset()
+    public void Reset()
     {
         this.Pmanager.KillSingleton();
         this.Pmanager = PrinterManager.getInstance();
@@ -47,10 +50,16 @@ public class ControllerManager {
 
     @PutMapping("/printers")
     void addPrinter(@RequestBody String id){
-        JSONObject idJson = new JSONObject();
-        idJson.put("id",id);
-        Pmanager.addPrinter(Integer.parseInt(idJson.get("id").toString()),true);
-        System.out.println("Printer Added, The id is :"+ Integer.parseInt(idJson.get("id").toString()));
+        JSONObject dataJson = new JSONObject(id);
+        int flag=0;
+        for(printer e : Pmanager.getPrinters()) {
+            if(e.getId() == parseInt(dataJson.get("id").toString()))
+            {
+                System.out.println("unleagal printer add, id exist");
+                return;}
+        };
+        Pmanager.addPrinter(parseInt(dataJson.get("id").toString()),true);
+        System.out.println("Printer Added, The id is :"+ parseInt(dataJson.get("id").toString()));
     }
 
     @GetMapping("/printers/{id}")

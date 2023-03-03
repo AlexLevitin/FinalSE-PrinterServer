@@ -28,7 +28,7 @@ class ControllerManagerTest {
     @Test
     void addPrinterValidInput()
     {
-        cm.addPrinter("3");
+        cm.addPrinter("{id:3}");
         assertEquals("{\"printer3\":{\"liveness\":true,\"id\":3}}",cm.getPrinterByID(3));
     }
 
@@ -36,7 +36,7 @@ class ControllerManagerTest {
     void addPrinterInvalidInputNotInteger()
     {
         Exception exception = assertThrows(NumberFormatException.class, () -> {
-            cm.addPrinter("3d");
+            cm.addPrinter("{id:3d}");
 
         });
 
@@ -56,27 +56,27 @@ class ControllerManagerTest {
     @Test
     void getPrinterssWithPrintersAdded()
     {
-        cm.addPrinter("1");
+        cm.addPrinter("{id:1}");
         String s = cm.GetPrinterss();
         assertEquals("[{\"printer1\":{\"Jobs\":{},\"liveness\":true,\"id\":1}}]",s);
     }
 
     @Test
     void getPrinterByIDPrinterExists() {
-        cm.addPrinter("1");
+        cm.addPrinter("{id:1}");
         String res = cm.getPrinterByID(1);
         assertEquals("{\"printer1\":{\"liveness\":true,\"id\":1}}",res);
     }
     @Test
     void getPrinterByIDPrinterDoesntExist() {
-        cm.addPrinter("1");
+        cm.addPrinter("{id:1}");
         String res = cm.getPrinterByID(3);
         assertEquals("{}",res);
     }
 
     @Test
     void getPrinterByIDAndAllJobsValid() {
-        cm.addPrinter("2");
+        cm.addPrinter("{id:2}");
         int jobId = cm.AddPrintingJobAndReturnId("{data:Gumigam}", 2);
         String s = cm.getPrinterByIDAndAllJobs(2);
         assertTrue(s.contains("\"id\":"+jobId+",\"timeForTheJob\":0.007,\"content\":\"Gumigam\",\"status\":false}},\"liveness\":true,\"id\":2}}")
@@ -84,7 +84,7 @@ class ControllerManagerTest {
     }
     @Test
     void getPrinterByIDAndAllJobsNoJobs() {
-        cm.addPrinter("2");
+        cm.addPrinter("{id:2}");
         String s = cm.getPrinterByIDAndAllJobs(2);
         assertEquals("{\"printer2\":{\"Jobs\":{},\"liveness\":true,\"id\":2}}",s);
     }
@@ -96,21 +96,21 @@ class ControllerManagerTest {
 
     @Test
     void deletePrinterByID() {
-        cm.addPrinter("5");
+        cm.addPrinter("{id:5}");
         cm.deletePrinterByID(5);
         String s = cm.getPrinterByID(5);
         assertTrue(s.contains("{\"liveness\":false"));
     }
     @Test
     void updateLivnessLivePrinter() {
-        cm.addPrinter("1");
+        cm.addPrinter("{id:1}");
         cm.UpdateLivness(1);
         String s = cm.getPrinterByID(1);
         assertTrue(s.contains("{\"liveness\":true"));
     }
     @Test
     void updateLivnessDisconnectedPrinter() {
-        cm.addPrinter("1");
+        cm.addPrinter("{id:1}");
         cm.deletePrinterByID(1);
         cm.UpdateLivness(1);
         String s = cm.getPrinterByID(1);
@@ -119,7 +119,7 @@ class ControllerManagerTest {
 
     @Test
     void addPrintingJobAndReturnIdValidPrinter() {
-        cm.addPrinter("1");
+        cm.addPrinter("{id:1}");
         cm.AddPrintingJobAndReturnId("{data:dio}",1);
         int jobId = cm.AddPrintingJobAndReturnId("{data:jojo}",1);
         String s = cm.getPrinterByIDAndAllJobs(1);
@@ -127,14 +127,14 @@ class ControllerManagerTest {
     }
     @Test
     void addPrintingJobAndReturnIdInvalidPrinter() {
-        cm.addPrinter("1");
+        cm.addPrinter("{id:1}");
         int jobId = cm.AddPrintingJobAndReturnId("{data:jojo}",2);
         assertTrue(jobId == -1);
     }
 
     @Test
     void addPrintingJobAndReturnIdLongString() {
-        cm.addPrinter("1");
+        cm.addPrinter("{id:1}");
         String val = "sara shara shir sameach";
         int jobId = cm.AddPrintingJobAndReturnId("{data:\""+val+"\"}",1);
         String s = cm.getPrinterByIDAndAllJobs(1);
@@ -142,7 +142,7 @@ class ControllerManagerTest {
     }
     @Test
     void updateJobStatusFalseToTrue() {
-        cm.addPrinter("1");
+        cm.addPrinter("{id:1}");
         int jobId = cm.AddPrintingJobAndReturnId("{data:GOAT}",1);
         cm.updateJobStatus(jobId);
         String s = cm.GetJobDetails(jobId);
@@ -150,7 +150,7 @@ class ControllerManagerTest {
     }
     @Test
     void updateJobStatusTrueToFalse() {
-        cm.addPrinter("1");
+        cm.addPrinter("{id:1}");
         int jobId = cm.AddPrintingJobAndReturnId("{data:Yakov}",1);
         cm.updateJobStatus(0);
         cm.updateJobStatus(0);
@@ -160,14 +160,14 @@ class ControllerManagerTest {
 
     @Test
     void getJobDetailsValid() {
-        cm.addPrinter("17");
+        cm.addPrinter("{id:17}");
         int jobId = cm.AddPrintingJobAndReturnId("{data:\"Yakov Reznik the GOAT\"}",17);
         String s = cm.GetJobDetails(jobId);
         assertTrue(s.contains("\"id\":"+jobId+",\"timeForTheJob\":0.021,\"content\":\"Yakov Reznik the GOAT\",\"status\":false}"));
     }
     @Test
     void getJobDetailsWrongID() {
-        cm.addPrinter("17");
+        cm.addPrinter("{id:17}");
         int jobId = cm.AddPrintingJobAndReturnId("{data:\"Yakov Reznik the GOAT\"}",17);
         String s = cm.GetJobDetails(2);
         assertEquals("{}",s);
@@ -175,8 +175,8 @@ class ControllerManagerTest {
 
     @Test
     void getStatistics() {
-        cm.addPrinter("2");
-        cm.addPrinter("7");
+        cm.addPrinter("{id:2}");
+        cm.addPrinter("{id:7}");
         cm.deletePrinterByID(7);
         int job1 = cm.AddPrintingJobAndReturnId("{data:\"master of puppets\"}",2);
         int job2 = cm.AddPrintingJobAndReturnId("{data:\"black\"}",2);
@@ -207,7 +207,7 @@ class ControllerManagerTest {
     }
     @Test
     void getPrinterJobsFilteredNoJobsWithGivenStatus() {
-        cm.addPrinter("1");
+        cm.addPrinter("{id:1}");
         int jobId = cm.AddPrintingJobAndReturnId("{data:\"mid or feed\"}", 1);
         cm.updateJobStatus(jobId);
         String b = "false";
@@ -216,7 +216,7 @@ class ControllerManagerTest {
     }
     @Test
     void getPrinterJobsFilteredJobsWithGivenStatus() {
-        cm.addPrinter("1");
+        cm.addPrinter("{id:1}");
         String val = "top or chop";
         int jobId = cm.AddPrintingJobAndReturnId("{data:\""+val+"\"}", 1);
         cm.updateJobStatus(jobId);
@@ -226,7 +226,7 @@ class ControllerManagerTest {
     }
     @Test
     void getPrinterJobsFilteredJobsNoStatus() {
-        cm.addPrinter("1");
+        cm.addPrinter("{id:1}");
         String val1 = "top or chop";
         int jobId1 = cm.AddPrintingJobAndReturnId("{data:\""+val1+"\"}", 1);
         cm.updateJobStatus(jobId1);
@@ -246,8 +246,8 @@ class ControllerManagerTest {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-        cm.addPrinter("1");
-        cm.addPrinter("2");
+        cm.addPrinter("{id:1}");
+        cm.addPrinter("{id:2}");
         ArrayList<Integer> jobs = new ArrayList<Integer>();
         for(int i=0;i<2;i++)
         {
@@ -265,8 +265,8 @@ class ControllerManagerTest {
     @Test
     void getPrinterJobsFilteredSuperDateAndStatusFutureDate() {
         LocalDateTime date = LocalDateTime.now();
-        cm.addPrinter("1");
-        cm.addPrinter("2");
+        cm.addPrinter("{id:1}");
+        cm.addPrinter("{id:2}");
         ArrayList<Integer> jobs = new ArrayList<Integer>();
         for(int i=0;i<2;i++)
         {
@@ -284,8 +284,8 @@ class ControllerManagerTest {
     @Test
     void getPrinterJobsFilteredSuperDateAndStatusWrongFormatDate() {
         LocalDateTime date = LocalDateTime.now();
-        cm.addPrinter("1");
-        cm.addPrinter("2");
+        cm.addPrinter("{id:1}");
+        cm.addPrinter("{id:2}");
         ArrayList<Integer> jobs = new ArrayList<Integer>();
         for(int i=0;i<2;i++)
         {
@@ -308,8 +308,8 @@ class ControllerManagerTest {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-        cm.addPrinter("1");
-        cm.addPrinter("2");
+        cm.addPrinter("{id:1}");
+        cm.addPrinter("{id:2}");
         ArrayList<Integer> jobs = new ArrayList<Integer>();
         for(int i=0;i<2;i++)
         {
@@ -327,8 +327,8 @@ class ControllerManagerTest {
     @Test
     void getPrinterJobsFilteredSuperDateNoStatusFutureDate() {
         LocalDateTime date = LocalDateTime.now();
-        cm.addPrinter("1");
-        cm.addPrinter("2");
+        cm.addPrinter("{id:1}");
+        cm.addPrinter("{id:2}");
         ArrayList<Integer> jobs = new ArrayList<Integer>();
         for(int i=0;i<2;i++)
         {
@@ -346,8 +346,8 @@ class ControllerManagerTest {
     @Test
     void getPrinterJobsFilteredSuperDateNoStatusWrongFormatDate() {
         LocalDateTime date = LocalDateTime.now();
-        cm.addPrinter("1");
-        cm.addPrinter("2");
+        cm.addPrinter("{id:1}");
+        cm.addPrinter("{id:2}");
         ArrayList<Integer> jobs = new ArrayList<Integer>();
         for(int i=0;i<2;i++)
         {
@@ -364,8 +364,8 @@ class ControllerManagerTest {
 
     @Test
     void getPrinterJobsFilteredSuperStatusNoDate() {
-        cm.addPrinter("1");
-        cm.addPrinter("2");
+        cm.addPrinter("{id:1}");
+        cm.addPrinter("{id:2}");
         ArrayList<Integer> jobs = new ArrayList<Integer>();
         for(int i=0;i<2;i++)
         {
@@ -382,8 +382,8 @@ class ControllerManagerTest {
 
     @Test
     void getPrinterJobsFilteredSuperStatusNoDate2() {
-        cm.addPrinter("1");
-        cm.addPrinter("2");
+        cm.addPrinter("{id:1}");
+        cm.addPrinter("{id:2}");
         ArrayList<Integer> jobs = new ArrayList<Integer>();
         for(int i=0;i<2;i++)
         {
@@ -400,15 +400,15 @@ class ControllerManagerTest {
 
     @Test
     void getPrinterJobsFilteredSuperNoStatusNoDateNoJobsNoMoney() {
-        cm.addPrinter("1");
-        cm.addPrinter("2");
+        cm.addPrinter("{id:1}");
+        cm.addPrinter("{id:2}");
         String s =cm.GetPrinterJobsFilteredSuper(null, null);
         assertTrue(s.equals("[]"));
     }
     @Test
     void getPrinterJobsFilteredSuperNoStatusNoDateNoMoney() {
-        cm.addPrinter("1");
-        cm.addPrinter("2");
+        cm.addPrinter("{id:1}");
+        cm.addPrinter("{id:2}");
         ArrayList<Integer> jobs = new ArrayList<Integer>();
         for(int i=0;i<2;i++)
         {
