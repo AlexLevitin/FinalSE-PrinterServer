@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Printer Managment Client</title>
+</head>
+<body>
+  <div id="menu">
+    <div><h1>Printer Status:</h1></div>
+    <div>Add Printer Add ID (0-20) <input id="AddPrinterInput" type="number" id="tentacles" min="0" max="20" placeholder="ID">
+        <button id="AddPrinterBtn" type="button" onclick="AddPrinterWithBody()">Add Printer</button>
+    </div>
+
+    <div>Show all printers <button id="ShowAllPrinters" type="button">Show</button></div>
+
+    <div>Get printer with specific ID <input type="number" id="GetPrinterNoJobs" min="0" max="20" placeholder="ID">
+        <button type="button" onclick="GetPrinterById()">Get Printer</button></div>
+
+    <div>Get specific printer and all its jobs <input type="number" id="GetPrinter" min="0" max="20"placeholder="ID" >
+        <button type="button" onclick="GetPrinterByIdAndJobs()">Get Printer </button></div>
+    
+    <div>Disconnect Printer <input type="number" id="DisconnectInput" min="0" max="20" placeholder="ID">
+            <button type="button" onclick="DisconnectPrinter()" id="DisconnectBtn">Disconnect</button></div>
+
+    <div>Update Liveness Of Printer <input type="number" id="LivenessInput" min="0" max="20" placeholder="ID">
+                <button type="button" onclick="UpdateLiveness()" id="LivenessBtn">Update</button></div>
+
+    <div>Add Job To Printer <input type="number" id="AddJobIdInput" min="0" max="20" placeholder="ID">
+        <input type="string" id="JobStringInput" placeholder="Text To Print">
+    <button type="button" id="AddJobBtn" onclick="AddJobAndText()">Add</button></div>
+
+    <div>Get Printer Filterd Jobs by status <input type="number" id="FilterSoloId" min="0" max="20" placeholder="ID">
+        <select id="FilterStatusInputSolo">
+            <option value="none">Both</option>
+            <option value="statusTrueSolo">True</option>
+            <option value="statusFalseSolo">False</option>
+          </select>
+          <button onclick="FilterStatus()" type="button" id="AddJobBtn">Get</button></div>
+
+    <div>Update Job Status <input type="number" id="UpdateJobStatusInput" min="0" max="9999" placeholder="job ID">
+        <button type="button" onclick="UpdateJobStatusInput()" id="AddJobBtn">Add</button></div>    
+
+    <div>Get Job Details <input type="number" id="GetJobDetails" min="0" max="9999" placeholder="job ID">
+            <button type="button" onclick="GetJobDetails()" id="AddJobBtn">Add</button></div>   
+
+        <div>Get Printer Filterd Jobs by status 
+            <input type="datetime-local" id="timeInput"
+            value="1999-09-30T01:00:00">
+    
+            <select id="FilterStatusInput">
+                <option value="none">Both</option>
+                <option value="statusTrue">True</option>
+                <option value="statusFalse">False</option>
+              </select>
+              <button type="button" onclick="FilterStatusDate()" id="AddJobBtn">Get</button></div>
+
+    <div>Show Statistics <button type="button" onclick="GetStats()" id="GetStats">Show</button></div>   
+  </div> 
+    <div id="loader" class="loader"></div>
+
+    <div id="data"></div>
+
+
+</body>
+
+<script src="index.js"></script>
+
+</html>
+
+<style>
+  #menu{
+    width: 40%;
+    float: left;
+  }
+    #data{
+        text-align: left;
+        font-weight: normal;
+        font-size: large;
+        width: 60%;
+        height: 100%;
+        float: left;
+    }
+    div{
+        position: relative;
+        margin-top: 10px;
+    }
+
+    /* Style for button */
+button {
+  background-color: #008CBA;
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition-duration: 0.4s;
+}
+
+button:hover {
+  background-color: #555555;
+  color: white;
+}
+
+
+/* Style for body */
+body {
+  font-family: Arial, sans-serif; /* Font family */
+  font-size: 16px; /* Font size */
+  line-height: 1.6; /* Line height */
+  background-color: #f2f2f2; /* Background color */
+  color: #333; /* Text color */
+  margin: 0; /* Remove default margin */
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; /* Font family */
+  font-size: 16px; /* Font size */
+  line-height: 1.5; /* Line height */
+  color: #333; /* Text color */
+}
+
+input {
+  width: 20%; /* Width of input */
+  padding: 0.5em; /* Padding */
+  border: 1px solid #ccc; /* Border */
+  border-radius: 3px; /* Rounded corners */
+  font-size: 16px; /* Font size */
+  margin-bottom: 1em; /* Add spacing below input */
+}
+
+input[type="number"]{
+    width: 4%; /* Width of input */
+
+}
+
+select {
+  padding: 0.5em; /* Padding */
+  border: 1px solid #ccc; /* Border */
+  border-radius: 3px; /* Rounded corners */
+  font-size: 16px; /* Font size */
+  background-color: #fff; /* Background color */
+  color: #333; /* Text color */
+  appearance: none; /* Remove default appearance */
+  -webkit-appearance: none; /* For Safari and Chrome */
+  -moz-appearance: none; /* For Firefox */
+  cursor: pointer; /* Change cursor on hover */
+}
+
+.loader {
+  border: 16px solid #f3f3f3; 
+  border-top: 16px solid #3498db; 
+  border-radius: 50%; /* Rounded shape */
+  width: 120px; /* Width and height of the loader */
+  height: 120px;
+  animation: spin 2s linear infinite; /* Add animation */
+  position: absolute;
+  top:20px;
+  left: 45%;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); } /* Starting position */
+  100% { transform: rotate(360deg); } /* Ending position */
+}
+
+
+@keyframes animateLetter {
+  0%   {text-shadow: 0 0 6px #000;
+        color:transparent;
+        top:-10px ;}
+  100% {
+    text-shadow: 0 0 0px #000;
+        color:transparent;
+        top:0px ;
+
+    }
+}
+
+span{
+  position: relative;
+        margin: 0;
+    }
+
+    
+</style>
